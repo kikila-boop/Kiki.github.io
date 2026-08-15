@@ -1,0 +1,2356 @@
+<!DOCTYPE html>
+<!-- saved from url=(0028)http://127.0.0.1:5500/2.HTML -->
+<html lang="zh-CN"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>辉盼线条 · 价格查询</title>
+    <style>
+        /* ===== 全局重置 & 基础 ===== */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        :root {
+            --primary: #1a2a3a;
+            --primary-light: #2c4058;
+            --accent: #e67e22;
+            --accent-light: #f39c12;
+            --bg: #f4f6f9;
+            --card-bg: #ffffff;
+            --text: #1e2a3a;
+            --text-light: #5a6a7a;
+            --border: #dce1e8;
+            --shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            --radius: 14px;
+            --transition: 0.25s ease;
+        }
+        html {
+            font-size: 15px;
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 0 0 3rem 0;
+        }
+
+        /* ===== 头部 ===== */
+        .app-header {
+            background: var(--primary);
+            color: #fff;
+            padding: 1.2rem 2rem 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(4px);
+        }
+        .header-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.8rem 1.5rem;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        .logo-icon {
+            font-size: 1.8rem;
+            line-height: 1;
+        }
+        .logo-text {
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        .logo-text span {
+            color: var(--accent-light);
+        }
+        .logo-sub {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            font-weight: 400;
+            margin-left: 0.3rem;
+        }
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            flex: 1 1 auto;
+            max-width: 580px;
+        }
+        .search-wrap {
+            flex: 1 1 200px;
+            position: relative;
+            min-width: 140px;
+        }
+        .search-wrap input {
+            width: 100%;
+            padding: 0.55rem 1rem 0.55rem 2.4rem;
+            border: none;
+            border-radius: 40px;
+            background: rgba(255, 255, 255, 0.14);
+            color: #fff;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-wrap input::placeholder {
+            color: rgba(255, 255, 255, 0.55);
+        }
+        .search-wrap input:focus {
+            background: rgba(255, 255, 255, 0.22);
+            box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+        }
+        .search-wrap .icon {
+            position: absolute;
+            left: 0.8rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 1rem;
+            pointer-events: none;
+        }
+        .stats-badge {
+            background: rgba(255, 255, 255, 0.12);
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            color: rgba(255, 255, 255, 0.85);
+        }
+        .stats-badge strong {
+            color: #fff;
+        }
+
+        /* ===== 系列筛选标签 ===== */
+        .series-filter {
+            max-width: 1400px;
+            margin: 1.2rem auto 0;
+            padding: 0 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            align-items: center;
+        }
+        .series-filter .label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            margin-right: 0.2rem;
+        }
+        .filter-btn {
+            padding: 0.3rem 1.1rem;
+            border-radius: 30px;
+            border: 1.5px solid var(--border);
+            background: transparent;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .filter-btn:hover {
+            border-color: var(--primary-light);
+            color: var(--primary);
+            background: rgba(26, 42, 58, 0.04);
+        }
+        .filter-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: #fff;
+        }
+        .filter-btn.active:hover {
+            background: var(--primary-light);
+            border-color: var(--primary-light);
+        }
+        .filter-btn.clear-btn {
+            border-color: transparent;
+            color: var(--text-light);
+            font-weight: 400;
+        }
+        .filter-btn.clear-btn:hover {
+            background: rgba(0, 0, 0, 0.04);
+            border-color: var(--border);
+        }
+
+        /* ===== 产品网格 ===== */
+        .main-content {
+            max-width: 1400px;
+            margin: 1.5rem auto 0;
+            padding: 0 1.5rem;
+        }
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 2rem 0 1rem 0;
+            padding-bottom: 0.4rem;
+            border-bottom: 3px solid var(--accent-light);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .section-title .count {
+            font-size: 0.75rem;
+            font-weight: 400;
+            color: var(--text-light);
+            background: var(--bg);
+            padding: 0.1rem 0.8rem;
+            border-radius: 30px;
+            border: 1px solid var(--border);
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.8rem;
+        }
+        .product-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 0.8rem 1rem 0.9rem;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 80px;
+            position: relative;
+        }
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+            border-color: var(--border);
+        }
+        .product-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1.4;
+            color: var(--text);
+            word-break: break-word;
+        }
+        .product-name .highlight {
+            background: #fdebd0;
+            padding: 0 0.1rem;
+            border-radius: 2px;
+        }
+        .product-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .product-price {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--accent);
+            letter-spacing: -0.2px;
+        }
+        .product-price .unit {
+            font-size: 0.7rem;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-left: 0.15rem;
+        }
+        .product-price.empty {
+            color: var(--text-light);
+            font-weight: 400;
+            font-size: 0.8rem;
+        }
+        .product-series-tag {
+            font-size: 0.6rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            padding: 0.15rem 0.6rem;
+            border-radius: 30px;
+            background: var(--bg);
+            color: var(--text-light);
+            border: 1px solid var(--border);
+            white-space: nowrap;
+        }
+
+        /* ===== 空状态 ===== */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 1rem;
+            color: var(--text-light);
+        }
+        .empty-state .big-icon {
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+            opacity: 0.5;
+        }
+        .empty-state p {
+            font-size: 1.1rem;
+        }
+
+        /* ===== 滚动条 ===== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #b0b8c4;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 0.8rem 1rem 0.6rem;
+            }
+            .header-inner {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
+            }
+            .logo-area {
+                justify-content: center;
+            }
+            .logo-text {
+                font-size: 1.1rem;
+            }
+            .header-controls {
+                max-width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .search-wrap {
+                flex: 1 1 100%;
+                min-width: 0;
+            }
+            .stats-badge {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .series-filter {
+                padding: 0 0.8rem;
+                gap: 0.4rem;
+                justify-content: center;
+            }
+            .filter-btn {
+                font-size: 0.7rem;
+                padding: 0.2rem 0.8rem;
+            }
+            .main-content {
+                padding: 0 0.8rem;
+            }
+            .section-title {
+                font-size: 1.1rem;
+                margin-top: 1.5rem;
+            }
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.6rem;
+            }
+            .product-card {
+                padding: 0.6rem 0.7rem 0.7rem;
+                min-height: 68px;
+            }
+            .product-name {
+                font-size: 0.78rem;
+            }
+            .product-price {
+                font-size: 1rem;
+            }
+        }
+        @media (max-width: 420px) {
+            .product-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.5rem;
+            }
+            .product-card {
+                min-height: 60px;
+                padding: 0.5rem 0.6rem 0.6rem;
+            }
+            .product-name {
+                font-size: 0.72rem;
+            }
+            .product-price {
+                font-size: 0.9rem;
+            }
+            .product-series-tag {
+                font-size: 0.5rem;
+                padding: 0.05rem 0.4rem;
+            }
+        }
+
+        /* ===== 打印优化 ===== */
+        @media print {
+            .app-header {
+                position: static;
+                background: #fff !important;
+                color: #000 !important;
+                box-shadow: none !important;
+            }
+            .search-wrap,
+            .stats-badge,
+            .series-filter {
+                display: none !important;
+            }
+            .product-card {
+                break-inside: avoid;
+                box-shadow: none !important;
+                border: 1px solid #ccc !important;
+            }
+            .product-price {
+                color: #000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 头部 ===== -->
+    <header class="app-header" id="appHeader">
+        <div class="header-inner">
+            <div class="logo-area">
+                <span class="logo-icon">📐</span>
+                <span class="logo-text">辉盼<span>线条</span></span>
+                <span class="logo-sub">价格表</span>
+            </div>
+            <div class="header-controls">
+                <div class="search-wrap">
+                    <span class="icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="搜索产品名称..." autocomplete="off">
+                </div>
+                <span class="stats-badge" id="statsBadge">共 <strong id="totalCount">177</strong> 款</span>
+            </div>
+        </div>
+        <!-- 系列筛选 -->
+        <div class="series-filter" id="seriesFilter">
+            <span class="label">系列</span>
+            <button class="filter-btn active" data-series="all">全部</button>
+            <!-- 动态由 JS 生成 -->
+        <button class="filter-btn" data-series="5/6/7mm">5/6/7mm</button><button class="filter-btn" data-series="8mm">8mm</button><button class="filter-btn" data-series="9mm">9mm</button><button class="filter-btn" data-series="10mm">10mm</button><button class="filter-btn" data-series="12/18mm">12/18mm</button><button class="filter-btn" data-series="平板/几字">平板/几字</button><button class="filter-btn" data-series="直角">直角</button><button class="filter-btn" data-series="T型条">T型条</button><button class="filter-btn" data-series="U型条">U型条</button><button class="filter-btn" data-series="灯带">灯带</button><button class="filter-btn" data-series="踢脚线">踢脚线</button></div>
+    </header>
+
+    <!-- ===== 主内容 ===== -->
+    <main class="main-content" id="mainContent">
+        <!-- 动态渲染 -->
+        <div id="productContainer">
+                    <div class="section-title">
+                        5/6/7mm
+                        <span class="count">26 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">5mm工字 (A款4.5)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm灯带工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm宽面工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm灯带收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm圆阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm方阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm尖阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm顶线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm尖阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm双工腰线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm弧形阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm凹工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm灯带踢脚线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥20</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm工字豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm圆阳角豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥17</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm收边豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm尖阳角豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm灯带工字豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm阴角豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm灯带收边豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5mm双工腰线豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">6mm工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">6mm收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">7mm工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">7mm收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">5/6/7mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        8mm
+                        <span class="count">35 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">8mm工字 (A款4.8/薄款3.2)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm宽面工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm窄面工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">20宽面工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥16</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm灯带工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm凹工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm收边 (A款4.5/P款2.7)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm灯带收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">灯带阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">灯带阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥18</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm隐形门工字线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm隐形门收边线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">F条折弯收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm腰线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm尖阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm顶线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm弧形阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm圆阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm方阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm尖阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm海棠阳角1号 (哑黑/玫瑰金/哑橙金/白色)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm海棠阳角2号</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm土子线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">双凹阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">内工字1号</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥11</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">内工字2号 (8厘内工字)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">内工字3号 (有缝银色包覆/黑色现货)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm工字豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm收边豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm灯带工字豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm灯带收边豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm圆阳角豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥16</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm尖阳角豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm阴角豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8mm双工腰线豪华款</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">8mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        9mm
+                        <span class="count">15 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">9mm工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9mm工字厚款 (只有黑色)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9mm收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9mm收边厚款 (只有黑色)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9mm双工腰线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9mm灯带工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9mm灯带收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥13</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">中缝线 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">双阳角 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">双阴角 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">尖阳角 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">单阴角 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">海棠角 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">2公分阴角 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">V缝条 (9mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥5</span>
+                                <span class="product-series-tag">9mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        10mm
+                        <span class="count">21 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">中缝线 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">中缝线 (10mm) ②</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">中缝线 (10mm) ③</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">阳角 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">阴角 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">收边线 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">收边线 (10mm) ②</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">收边转角 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">灯带双工字 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">灯带收边 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">框线 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">框线 (10mm) ②</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">框线 (10mm) ③</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">框线 (10mm) ④</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">顶角线 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥20</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">踢脚线 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥36</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">踢脚线 (10mm) ②</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥28</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">2公分直角 (10mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">10mm隐形门工字线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">10mm隐形门收边线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">10mm工字 宽型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">10mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        12/18mm
+                        <span class="count">15 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">12mm工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">12mm收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥13</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">12mm尖阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥18</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">12mm弧形阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥13</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">12mm双工腰线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥18</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">12mm顶线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥12</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">平缝线 (12mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">16板收边</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">18mm工字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥16</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">18mm收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">18mm尖阳角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥20</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">18mm弧形阴角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥18</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">18mm双工腰线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥20</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">18mm顶线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">平缝线 (18mm)</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">12/18mm</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        平板/几字
+                        <span class="count">9 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">1公分平板</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">1.5公分平板</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">2公分平板</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">3公分平板</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">4公分平板</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥18</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5*14几字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">8*16几字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">9*15几字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">6*20几字</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">平板/几字</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        直角
+                        <span class="count">16 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">10*10直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥5</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">15*15直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">20*20直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">25*25直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥9</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">30*30直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥11</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">35*35直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥18</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">40*40直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥19</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">50*50直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥26</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">10*20直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">10*30直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">20*30直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">15*20直角</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5*15直角 2.7米/只 (只有黑色)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">磨砂小角</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">磨砂中角</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">磨砂大角</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">直角</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        T型条
+                        <span class="count">17 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">0.6T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥5</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">0.8T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥5</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">1.0T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">1.2T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">1.5T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">2.0T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">2.7T条 单牙</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">0.6T条 双牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">0.8T条 双牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">1.0T条 双牙</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">1.5T条 双牙 (哑黑/玫瑰金/哑橙金/青金色)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">悬浮单T10</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">悬浮单T15</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">悬浮单T20</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">悬浮双T10</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">悬浮双T15</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">悬浮双T20</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">T型条</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        U型条
+                        <span class="count">17 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">带底6*11U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底7*15U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底7*20U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底7*30U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底9*11U型</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底10*15U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥8</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底12*20U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥13</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">带底12*35U型</div>
+                            <div class="product-meta">
+                                <span class="product-price"><span class="empty">—</span></span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*10U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*15U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*20U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*30U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*40U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*50U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥16</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">不带底10*60U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥17</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5*6U型 (只有黑色)</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥6</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">5*9U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥7</span>
+                                <span class="product-series-tag">U型条</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        灯带
+                        <span class="count">4 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">灯带中接2号</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥10</span>
+                                <span class="product-series-tag">灯带</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">错位灯带线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥20</span>
+                                <span class="product-series-tag">灯带</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">侧发光灯带收边</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">灯带</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">侧发光灯带U型</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">灯带</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="section-title">
+                        踢脚线
+                        <span class="count">2 款</span>
+                    </div>
+                    <div class="product-grid">
+                
+                        <div class="product-card">
+                            <div class="product-name">5公分内嵌式踢脚线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">踢脚线</span>
+                            </div>
+                        </div>
+                    
+                        <div class="product-card">
+                            <div class="product-name">6公分网红款一代踢脚线</div>
+                            <div class="product-meta">
+                                <span class="product-price">¥15</span>
+                                <span class="product-series-tag">踢脚线</span>
+                            </div>
+                        </div>
+                    </div></div>
+    </main>
+
+    <script>
+        // ================================================================
+        //  1. 数据 —— 从 Excel 完整提取
+        // ================================================================
+        const PRODUCT_DATA = [
+
+            // ---- 5 / 6 / 7 mm 系列 ----
+            { name: '5mm工字 (A款4.5)', price: 7, series: '5/6/7mm' },
+            { name: '5mm收边', price: 6, series: '5/6/7mm' },
+            { name: '5mm灯带工字', price: 12, series: '5/6/7mm' },
+            { name: '5mm宽面工字', price: 6, series: '5/6/7mm' },
+            { name: '5mm灯带收边', price: 12, series: '5/6/7mm' },
+            { name: '5mm圆阳角', price: 8, series: '5/6/7mm' },
+            { name: '5mm方阳角', price: 8, series: '5/6/7mm' },
+            { name: '5mm尖阳角', price: 8, series: '5/6/7mm' },
+            { name: '5mm顶线', price: 6, series: '5/6/7mm' },
+            { name: '5mm尖阴角', price: 8, series: '5/6/7mm' },
+            { name: '5mm双工腰线', price: 7, series: '5/6/7mm' },
+            { name: '5mm弧形阴角', price: 9, series: '5/6/7mm' },
+            { name: '5mm凹工字', price: 7, series: '5/6/7mm' },
+            { name: '5mm灯带踢脚线', price: 20, series: '5/6/7mm' },
+            { name: '5mm工字豪华款', price: 9, series: '5/6/7mm' },
+            { name: '5mm圆阳角豪华款', price: 17, series: '5/6/7mm' },
+            { name: '5mm收边豪华款', price: 9, series: '5/6/7mm' },
+            { name: '5mm尖阳角豪华款', price: null, series: '5/6/7mm' },
+            { name: '5mm灯带工字豪华款', price: 15, series: '5/6/7mm' },
+            { name: '5mm阴角豪华款', price: 12, series: '5/6/7mm' },
+            { name: '5mm灯带收边豪华款', price: 15, series: '5/6/7mm' },
+            { name: '5mm双工腰线豪华款', price: 12, series: '5/6/7mm' },
+            { name: '6mm工字', price: 6, series: '5/6/7mm' },
+            { name: '6mm收边', price: 6, series: '5/6/7mm' },
+            { name: '7mm工字', price: 6, series: '5/6/7mm' },
+            { name: '7mm收边', price: 6, series: '5/6/7mm' },
+
+            // ---- 8 mm 系列 ----
+            { name: '8mm工字 (A款4.8/薄款3.2)', price: 6, series: '8mm' },
+            { name: '8mm宽面工字', price: 6, series: '8mm' },
+            { name: '8mm窄面工字', price: 7, series: '8mm' },
+            { name: '20宽面工字', price: 16, series: '8mm' },
+            { name: '8mm灯带工字', price: 12, series: '8mm' },
+            { name: '8mm凹工字', price: 7, series: '8mm' },
+            { name: '8mm收边 (A款4.5/P款2.7)', price: 6, series: '8mm' },
+            { name: '8mm灯带收边', price: 12, series: '8mm' },
+            { name: '灯带阳角', price: 15, series: '8mm' },
+            { name: '灯带阴角', price: 18, series: '8mm' },
+            { name: '8mm隐形门工字线', price: 10, series: '8mm' },
+            { name: '8mm隐形门收边线', price: 9, series: '8mm' },
+            { name: 'F条折弯收边', price: 15, series: '8mm' },
+            { name: '8mm腰线', price: 8, series: '8mm' },
+            { name: '8mm尖阴角', price: 9, series: '8mm' },
+            { name: '8mm顶线', price: 7, series: '8mm' },
+            { name: '8mm弧形阴角', price: 8, series: '8mm' },
+            { name: '8mm圆阳角', price: 8, series: '8mm' },
+            { name: '8mm方阳角', price: 9, series: '8mm' },
+            { name: '8mm尖阳角', price: 8, series: '8mm' },
+            { name: '8mm海棠阳角1号 (哑黑/玫瑰金/哑橙金/白色)', price: 9, series: '8mm' },
+            { name: '8mm海棠阳角2号', price: 9, series: '8mm' },
+            { name: '8mm土子线', price: 10, series: '8mm' },
+            { name: '双凹阳角', price: 15, series: '8mm' },
+            { name: '内工字1号', price: 11, series: '8mm' },
+            { name: '内工字2号 (8厘内工字)', price: 9, series: '8mm' },
+            { name: '内工字3号 (有缝银色包覆/黑色现货)', price: 10, series: '8mm' },
+            { name: '8mm工字豪华款', price: 10, series: '8mm' },
+            { name: '8mm收边豪华款', price: 10, series: '8mm' },
+            { name: '8mm灯带工字豪华款', price: 15, series: '8mm' },
+            { name: '8mm灯带收边豪华款', price: 15, series: '8mm' },
+            { name: '8mm圆阳角豪华款', price: 16, series: '8mm' },
+            { name: '8mm尖阳角豪华款', price: 12, series: '8mm' },
+            { name: '8mm阴角豪华款', price: 12, series: '8mm' },
+            { name: '8mm双工腰线豪华款', price: 12, series: '8mm' },
+
+            // ---- 9 mm 系列 ----
+            { name: '9mm工字', price: 7, series: '9mm' },
+            { name: '9mm工字厚款 (只有黑色)', price: 12, series: '9mm' },
+            { name: '9mm收边', price: 7, series: '9mm' },
+            { name: '9mm收边厚款 (只有黑色)', price: 12, series: '9mm' },
+            { name: '9mm双工腰线', price: 10, series: '9mm' },
+            { name: '9mm灯带工字', price: 15, series: '9mm' },
+            { name: '9mm灯带收边', price: 13, series: '9mm' },
+            { name: '中缝线 (9mm)', price: null, series: '9mm' },
+            { name: '双阳角 (9mm)', price: 10, series: '9mm' },
+            { name: '双阴角 (9mm)', price: 9, series: '9mm' },
+            { name: '尖阳角 (9mm)', price: 10, series: '9mm' },
+            { name: '单阴角 (9mm)', price: 6, series: '9mm' },
+            { name: '海棠角 (9mm)', price: 10, series: '9mm' },
+            { name: '2公分阴角 (9mm)', price: 9, series: '9mm' },
+            { name: 'V缝条 (9mm)', price: 5, series: '9mm' },
+
+            // ---- 10 mm 系列 ----
+            { name: '中缝线 (10mm)', price: null, series: '10mm' },
+            { name: '中缝线 (10mm) ②', price: 12, series: '10mm' },
+            { name: '中缝线 (10mm) ③', price: null, series: '10mm' },
+            { name: '阳角 (10mm)', price: null, series: '10mm' },
+            { name: '阴角 (10mm)', price: null, series: '10mm' },
+            { name: '收边线 (10mm)', price: null, series: '10mm' },
+            { name: '收边线 (10mm) ②', price: null, series: '10mm' },
+            { name: '收边转角 (10mm)', price: null, series: '10mm' },
+            { name: '灯带双工字 (10mm)', price: null, series: '10mm' },
+            { name: '灯带收边 (10mm)', price: null, series: '10mm' },
+            { name: '框线 (10mm)', price: null, series: '10mm' },
+            { name: '框线 (10mm) ②', price: null, series: '10mm' },
+            { name: '框线 (10mm) ③', price: null, series: '10mm' },
+            { name: '框线 (10mm) ④', price: null, series: '10mm' },
+            { name: '顶角线 (10mm)', price: 20, series: '10mm' },
+            { name: '踢脚线 (10mm)', price: 36, series: '10mm' },
+            { name: '踢脚线 (10mm) ②', price: 28, series: '10mm' },
+            { name: '2公分直角 (10mm)', price: 12, series: '10mm' },
+            { name: '10mm隐形门工字线', price: 10, series: '10mm' },
+            { name: '10mm隐形门收边线', price: 10, series: '10mm' },
+            { name: '10mm工字 宽型', price: 10, series: '10mm' },
+
+            // ---- 12 / 18 mm 系列 ----
+            { name: '12mm工字', price: 15, series: '12/18mm' },
+            { name: '12mm收边', price: 13, series: '12/18mm' },
+            { name: '12mm尖阳角', price: 18, series: '12/18mm' },
+            { name: '12mm弧形阴角', price: 13, series: '12/18mm' },
+            { name: '12mm双工腰线', price: 18, series: '12/18mm' },
+            { name: '12mm顶线', price: 12, series: '12/18mm' },
+            { name: '平缝线 (12mm)', price: null, series: '12/18mm' },
+            { name: '16板收边', price: null, series: '12/18mm' },
+            { name: '18mm工字', price: 16, series: '12/18mm' },
+            { name: '18mm收边', price: 15, series: '12/18mm' },
+            { name: '18mm尖阳角', price: 20, series: '12/18mm' },
+            { name: '18mm弧形阴角', price: 18, series: '12/18mm' },
+            { name: '18mm双工腰线', price: 20, series: '12/18mm' },
+            { name: '18mm顶线', price: 15, series: '12/18mm' },
+            { name: '平缝线 (18mm)', price: null, series: '12/18mm' },
+
+            // ---- 平板 / 几字条 系列 ----
+            { name: '1公分平板', price: 7, series: '平板/几字' },
+            { name: '1.5公分平板', price: 8, series: '平板/几字' },
+            { name: '2公分平板', price: 9, series: '平板/几字' },
+            { name: '3公分平板', price: 15, series: '平板/几字' },
+            { name: '4公分平板', price: 18, series: '平板/几字' },
+            { name: '5*14几字', price: 7, series: '平板/几字' },
+            { name: '8*16几字', price: 8, series: '平板/几字' },
+            { name: '9*15几字', price: 8, series: '平板/几字' },
+            { name: '6*20几字', price: 9, series: '平板/几字' },
+
+            // ---- 直角 系列 ----
+            { name: '10*10直角', price: 5, series: '直角' },
+            { name: '15*15直角', price: 6, series: '直角' },
+            { name: '20*20直角', price: 7, series: '直角' },
+            { name: '25*25直角', price: 9, series: '直角' },
+            { name: '30*30直角', price: 11, series: '直角' },
+            { name: '35*35直角', price: 18, series: '直角' },
+            { name: '40*40直角', price: 19, series: '直角' },
+            { name: '50*50直角', price: 26, series: '直角' },
+            { name: '10*20直角', price: 6, series: '直角' },
+            { name: '10*30直角', price: 10, series: '直角' },
+            { name: '20*30直角', price: 10, series: '直角' },
+            { name: '15*20直角', price: 7, series: '直角' },
+            { name: '5*15直角 2.7米/只 (只有黑色)', price: 7, series: '直角' },
+            { name: '磨砂小角', price: null, series: '直角' },
+            { name: '磨砂中角', price: null, series: '直角' },
+            { name: '磨砂大角', price: null, series: '直角' },
+
+            // ---- T型条 系列 ----
+            { name: '0.6T条 单牙', price: 5, series: 'T型条' },
+            { name: '0.8T条 单牙', price: 5, series: 'T型条' },
+            { name: '1.0T条 单牙', price: null, series: 'T型条' },
+            { name: '1.2T条 单牙', price: 6, series: 'T型条' },
+            { name: '1.5T条 单牙', price: null, series: 'T型条' },
+            { name: '2.0T条 单牙', price: 7, series: 'T型条' },
+            { name: '2.7T条 单牙', price: null, series: 'T型条' },
+            { name: '0.6T条 双牙', price: 6, series: 'T型条' },
+            { name: '0.8T条 双牙', price: 6, series: 'T型条' },
+            { name: '1.0T条 双牙', price: 6, series: 'T型条' },
+            { name: '1.5T条 双牙 (哑黑/玫瑰金/哑橙金/青金色)', price: 7, series: 'T型条' },
+            { name: '悬浮单T10', price: 7, series: 'T型条' },
+            { name: '悬浮单T15', price: 8, series: 'T型条' },
+            { name: '悬浮单T20', price: 10, series: 'T型条' },
+            { name: '悬浮双T10', price: 10, series: 'T型条' },
+            { name: '悬浮双T15', price: null, series: 'T型条' },
+            { name: '悬浮双T20', price: null, series: 'T型条' },
+
+            // ---- U型条 系列 ----
+            { name: '带底6*11U型', price: 7, series: 'U型条' },
+            { name: '带底7*15U型', price: 8, series: 'U型条' },
+            { name: '带底7*20U型', price: 8, series: 'U型条' },
+            { name: '带底7*30U型', price: 15, series: 'U型条' },
+            { name: '带底9*11U型', price: null, series: 'U型条' },
+            { name: '带底10*15U型', price: 8, series: 'U型条' },
+            { name: '带底12*20U型', price: 13, series: 'U型条' },
+            { name: '带底12*35U型', price: null, series: 'U型条' },
+            { name: '不带底10*10U型', price: 6, series: 'U型条' },
+            { name: '不带底10*15U型', price: 7, series: 'U型条' },
+            { name: '不带底10*20U型', price: 7, series: 'U型条' },
+            { name: '不带底10*30U型', price: 10, series: 'U型条' },
+            { name: '不带底10*40U型', price: 15, series: 'U型条' },
+            { name: '不带底10*50U型', price: 16, series: 'U型条' },
+            { name: '不带底10*60U型', price: 17, series: 'U型条' },
+            { name: '5*6U型 (只有黑色)', price: 6, series: 'U型条' },
+            { name: '5*9U型', price: 7, series: 'U型条' },
+
+            // ---- 灯带 系列 ----
+            { name: '灯带中接2号', price: 10, series: '灯带' },
+            { name: '错位灯带线', price: 20, series: '灯带' },
+            { name: '侧发光灯带收边', price: 15, series: '灯带' },
+            { name: '侧发光灯带U型', price: 15, series: '灯带' },
+
+            // ---- 踢脚线 系列 ----
+            { name: '5公分内嵌式踢脚线', price: 15, series: '踢脚线' },
+            { name: '6公分网红款一代踢脚线', price: 15, series: '踢脚线' },
+        ];
+
+        // ================================================================
+        //  2. 辅助：提取系列列表 & 去重
+        // ================================================================
+        const seriesSet = new Set(PRODUCT_DATA.map(d => d.series));
+        const SERIES_LIST = Array.from(seriesSet);
+
+        // ================================================================
+        //  3. DOM 引用
+        // ================================================================
+        const searchInput = document.getElementById('searchInput');
+        const seriesFilterEl = document.getElementById('seriesFilter');
+        const productContainer = document.getElementById('productContainer');
+        const totalCountEl = document.getElementById('totalCount');
+
+        // ================================================================
+        //  4. 渲染函数
+        // ================================================================
+        let currentSeries = 'all';
+        let currentSearch = '';
+
+        function render() {
+            // 过滤
+            let filtered = PRODUCT_DATA;
+            if (currentSeries !== 'all') {
+                filtered = filtered.filter(d => d.series === currentSeries);
+            }
+            if (currentSearch.trim()) {
+                const kw = currentSearch.trim().toLowerCase();
+                filtered = filtered.filter(d => d.name.toLowerCase().includes(kw));
+            }
+
+            // 更新统计
+            totalCountEl.textContent = filtered.length;
+
+            // 按系列分组（保持系列顺序）
+            const grouped = {};
+            const seriesOrder = currentSeries === 'all' ? SERIES_LIST : [currentSeries];
+            // 但如果搜索了，只显示有匹配的系列
+            const activeSeries = currentSeries === 'all' ? SERIES_LIST : [currentSeries];
+            for (const s of activeSeries) {
+                const items = filtered.filter(d => d.series === s);
+                if (items.length > 0) {
+                    grouped[s] = items;
+                }
+            }
+
+            // 如果没有任何数据
+            if (Object.keys(grouped).length === 0) {
+                productContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="big-icon">🔍</div>
+                        <p>没有找到匹配的产品</p>
+                        <p style="font-size:0.9rem;margin-top:0.4rem;opacity:0.7;">试试其他关键词或清除筛选</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 构建 HTML
+            let html = '';
+            for (const [seriesName, items] of Object.entries(grouped)) {
+                html += `
+                    <div class="section-title">
+                        ${seriesName}
+                        <span class="count">${items.length} 款</span>
+                    </div>
+                    <div class="product-grid">
+                `;
+                for (const item of items) {
+                    const priceDisplay = (item.price !== null && item.price !== undefined) ?
+                        `¥${item.price}` :
+                        '<span class="empty">—</span>';
+                    // 高亮搜索词
+                    let nameDisplay = item.name;
+                    if (currentSearch.trim()) {
+                        const kw = currentSearch.trim();
+                        const idx = nameDisplay.toLowerCase().indexOf(kw.toLowerCase());
+                        if (idx !== -1) {
+                            const before = nameDisplay.slice(0, idx);
+                            const match = nameDisplay.slice(idx, idx + kw.length);
+                            const after = nameDisplay.slice(idx + kw.length);
+                            nameDisplay = `${before}<span class="highlight">${match}</span>${after}`;
+                        }
+                    }
+                    html += `
+                        <div class="product-card">
+                            <div class="product-name">${nameDisplay}</div>
+                            <div class="product-meta">
+                                <span class="product-price">${priceDisplay}</span>
+                                <span class="product-series-tag">${seriesName}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+                html += `</div>`;
+            }
+            productContainer.innerHTML = html;
+        }
+
+        // ================================================================
+        //  5. 构建系列筛选按钮
+        // ================================================================
+        function buildFilterButtons() {
+            // 保留 "全部" 按钮（已存在）
+            const allBtn = seriesFilterEl.querySelector('[data-series="all"]');
+            // 移除其他动态按钮（保留 label 和 allBtn）
+            const existing = seriesFilterEl.querySelectorAll('.filter-btn:not([data-series="all"])');
+            existing.forEach(el => el.remove());
+
+            // 按原始顺序添加
+            for (const s of SERIES_LIST) {
+                const btn = document.createElement('button');
+                btn.className = 'filter-btn';
+                btn.dataset.series = s;
+                btn.textContent = s;
+                btn.addEventListener('click', () => {
+                    // 更新激活状态
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    currentSeries = s;
+                    render();
+                });
+                seriesFilterEl.appendChild(btn);
+            }
+
+            // 全部按钮事件
+            allBtn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                allBtn.classList.add('active');
+                currentSeries = 'all';
+                render();
+            });
+            // 默认激活全部
+            allBtn.classList.add('active');
+        }
+
+        // ================================================================
+        //  6. 搜索监听
+        // ================================================================
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            render();
+        });
+
+        // ================================================================
+        //  7. 初始化
+        // ================================================================
+        buildFilterButtons();
+        render();
+
+        // 小技巧：点击空白区域可清除搜索
+        document.addEventListener('click', (e) => {
+            if (e.target === document.body || e.target.closest('.main-content')) {
+                // 不强制清除，让用户自己控制
+            }
+        });
+
+        // 键盘快捷键：ESC 清空搜索
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                searchInput.value = '';
+                currentSearch = '';
+                render();
+                searchInput.blur();
+            }
+        });
+
+        console.log('✅ 辉盼线条价格表已加载，共 ' + PRODUCT_DATA.length + ' 款产品');
+    </script>
+
+<!-- Code injected by live-server -->
+<script>
+	// <![CDATA[  <-- For SVG support
+	if ('WebSocket' in window) {
+		(function () {
+			function refreshCSS() {
+				var sheets = [].slice.call(document.getElementsByTagName("link"));
+				var head = document.getElementsByTagName("head")[0];
+				for (var i = 0; i < sheets.length; ++i) {
+					var elem = sheets[i];
+					var parent = elem.parentElement || head;
+					parent.removeChild(elem);
+					var rel = elem.rel;
+					if (elem.href && typeof rel != "string" || rel.length == 0 || rel.toLowerCase() == "stylesheet") {
+						var url = elem.href.replace(/(&|\?)_cacheOverride=\d+/, '');
+						elem.href = url + (url.indexOf('?') >= 0 ? '&' : '?') + '_cacheOverride=' + (new Date().valueOf());
+					}
+					parent.appendChild(elem);
+				}
+			}
+			var protocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://';
+			var address = protocol + window.location.host + window.location.pathname + '/ws';
+			var socket = new WebSocket(address);
+			socket.onmessage = function (msg) {
+				if (msg.data == 'reload') window.location.reload();
+				else if (msg.data == 'refreshcss') refreshCSS();
+			};
+			if (sessionStorage && !sessionStorage.getItem('IsThisFirstTime_Log_From_LiveServer')) {
+				console.log('Live reload enabled.');
+				sessionStorage.setItem('IsThisFirstTime_Log_From_LiveServer', true);
+			}
+		})();
+	}
+	else {
+		console.error('Upgrade your browser. This Browser is NOT supported WebSocket for Live-Reloading.');
+	}
+	// ]]>
+</script>
+
+</body></html>
